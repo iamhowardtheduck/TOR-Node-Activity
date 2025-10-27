@@ -1,0 +1,257 @@
+{
+  "processors": [
+  {
+    "geoip": {
+      "ignore_failure": true,
+      "description": "Adds geo-based data from the tor.exit.ip field",
+      "field": "tor.exit.ip",
+      "target_field": "tor.exit.geo"
+    }
+  },
+  {
+    "geoip": {
+      "ignore_failure": true,
+      "field": "tor.exit.ip",
+      "target_field": "tor.exit.as",
+      "database_file": "GeoLite2-ASN.mmdb",
+      "description": "Adds geo-based ASN data from the tor.exit.ip field if the first geoip processor created a country_name field.",
+      "if": "ctx.tor?.geo?.country_name != '' || ctx.tor?.geo?.country_name != null "
+    }
+  },
+  {
+    "set": {
+      "ignore_failure": true,
+      "description": "Creates the field tor.geo.location from the latitude and longitude from our first geo processor if the lat field is not null and formatted like a double.",
+      "field": "tor.geo.location",
+      "value": "{{tor.geo.location.lat}}, {{tor.geo.location.lon}}",
+      "if": "  def lat = ctx?.threat?.indicator?.geo?.location?.lat;\r   return lat != null && (lat instanceof float || lat instanceof double);\r "
+    }
+  },
+  {
+    "remove": {
+      "ignore_missing": true,
+      "description": "Removes the tor.exit.as.ip field, as this is created from the 2nd geoip processor and is redundant.",
+      "field": "tor.exit.as.ip"
+    }
+  },
+  {
+    "rename": {
+      "ignore_failure": true,
+      "ignore_missing": true,
+      "description": "Renames the tor.exit.as.asn field to the expected ECS format.",
+      "field": "tor.exit.as.asn",
+      "target_field": "tor.exit.as.number"
+    }
+  },
+  {
+    "rename": {
+      "ignore_failure": true,
+      "ignore_missing": true,
+      "description": "Renames the tor.exit.as.organization_name field to the expected ECS format.",
+      "field": "tor.exit.as.organization_name",
+      "target_field": "tor.exit.as.organization.name"
+    }
+  },
+  {
+    "remove": {
+      "ignore_failure": true,
+      "ignore_missing": true,
+      "description": "Removes the redundant original event from each document to reduce storage footprint.",
+      "field": [
+        "event.original",
+        "message"
+      ]
+    }
+  },
+  {
+    "set": {
+      "ignore_failure": true,
+      "ignore_empty_value": true,
+      "description": "Creates the field tor.routing.ip from tor.routing.addresses to be used in a GROK down the pipe.",
+      "field": "tor.routing.ip",
+      "value": "{{tor.routing.addresses}}"
+    }
+  },
+  {
+    "grok": {
+      "ignore_failure": true,
+      "ignore_missing": true,
+      "description": "The tor.routing.ip field contains either just an IPv4 and port, or sometimes both IPv4 & IPv6; this captures both.",
+      "field": "tor.routing.ip",
+      "patterns": [
+        "\\{0=%{IPV4:tor.routing.ipv4.ip}\\:%{INT:tor.routing.ipv4.port}\\, 1=\\[%{IPV6:tor.routing.ipv6.ip}\\]\\:%{INT:tor.routing.ipv6.port}",
+        "\\{0=%{IPV4:tor.routing.ipv4.ip}\\:%{INT:tor.routing.ipv4.port}"
+      ]
+    }
+  },
+  {
+    "geoip": {
+      "ignore_failure": true,
+      "description": "Creates geo-based data from the IPv4 address.",
+      "field": "tor.routing.ipv4.ip",
+      "target_field": "tor.routing.ipv4.geo"
+    }
+  },
+  {
+    "geoip": {
+      "ignore_failure": true,
+      "description": "Creates geo-based data from the IPv6 address.",
+      "field": "tor.routing.ipv6.ip",
+      "target_field": "tor.routing.ipv6.geo"
+    }
+  },
+  {
+    "set": {
+      "ignore_failure": true,
+      "description": "Creates the location field from the IPv4 lat/long if the lat field is not null and formatted like a double.",
+      "field": "tor.routing.ipv4.geo.location",
+      "value": "{{tor.routing.ipv4.geo.location.lat}}, {{tor.routing.ipv4.geo.location.lon}}",
+      "if": "  def lat = ctx?.tor?.routing?.ipv4?.geo?.location?.lat;\r   return lat != null && (lat instanceof float || lat instanceof double);\r "
+    }
+  },
+  {
+    "set": {
+      "ignore_failure": true,
+      "description": "Creates the location field from the IPv6 lat/long if the lat field is not null and formatted like a double.",
+      "field": "tor.routing.ipv6.geo.location",
+      "value": "{{tor.routing.ipv6.geo.location.lat}}, {{tor.routing.ipv6.geo.location.lon}}",
+      "if": "  def lat = ctx?.tor?.routing?.ipv6?.geo?.location?.lat;\r   return lat != null && (lat instanceof float || lat instanceof double);\r "
+    }
+  },
+  {
+    "remove": {
+      "ignore_failure": true,
+      "ignore_missing": true,
+      "description": "Removes redundant or unused fields.",
+      "field": [
+        "tor.routing.ip",
+        "tor.routing.ipv6.geo.location.lat",
+        "tor.routing.ipv6.geo.location.lon",
+        "tor.routing.ipv4.geo.location.lat",
+        "tor.routing.ipv4.geo.location.lon",
+        "tor.routing.addresses"
+      ]
+    }
+  },
+  {
+    "fingerprint": {
+      "ignore_missing": true,
+      "description": "Fingerprints: tor.description, tor.exit.ip, tor.name, tor.routing.addresses to look for any changes and writes to _id. This ensures there are only ever updates to core pieces of information.",
+      "fields": [
+        "tor.description",
+        "tor.exit.ip",
+        "tor.name",
+        "tor.routing.addresses",
+        "tor.bandwidth.advertised",
+        "tor.bandwidth.burst",
+        "tor.bandwidth.observed",
+        "tor.bandwidth.rate",
+        "tor.contact.original",
+        "tor.fingerprint",
+        "tor.platform"
+      ],
+      "target_field": "_id",
+      "method": "MD5"
+    }
+  },
+  {
+    "set": {
+      "ignore_failure": true,
+      "description": "If this value is present, then create a human readable description of what the function is.",
+      "field": "tor.detail.Authority",
+      "value": "Relay is a directory authority.",
+      "if": "ctx.tor?.description != null && ctx.tor?.description.contains('Authority')"
+    }
+  },
+  {
+    "set": {
+      "ignore_failure": true,
+      "description": "If this value is present, then create a human readable description of what the function is.",
+      "field": "tor.detail.BadExit",
+      "value": "Exit node that is not recommended (e.g., due to abuse reports or misconfiguration).",
+      "if": "ctx.tor?.description != null && ctx.tor?.description.contains('BadExit')"
+    }
+  },
+  {
+    "set": {
+      "ignore_failure": true,
+      "description": "If this value is present, then create a human readable description of what the function is.",
+      "field": "tor.detail.Exit",
+      "value": "Relay allows traffic to exit the Tor network.",
+      "if": "ctx.tor?.description != null && ctx.tor?.description.contains('Exit')"
+    }
+  },
+  {
+    "set": {
+      "ignore_failure": true,
+      "description": "If this value is present, then create a human readable description of what the function is.",
+      "field": "tor.detail.Fast",
+      "value": "Relay has high bandwidth, based on observed performance.",
+      "if": "ctx.tor?.description != null && ctx.tor?.description.contains('Fast')"
+    }
+  },
+  {
+    "set": {
+      "ignore_failure": true,
+      "description": "If this value is present, then create a human readable description of what the function is.",
+      "field": "tor.detail.Guard",
+      "value": "Relay is suitable for use as an entry node.",
+      "if": "ctx.tor?.description != null && ctx.tor?.description.contains('Guard')"
+    }
+  },
+  {
+    "set": {
+      "ignore_failure": true,
+      "description": "If this value is present, then create a human readable description of what the function is.",
+      "field": "tor.detail.HSDir",
+      "value": "Relay stores hidden service descriptors (used in onion services).",
+      "if": "ctx.tor?.description != null && ctx.tor?.description.contains('HSDir')"
+    }
+  },
+  {
+    "set": {
+      "ignore_failure": true,
+      "description": "If this value is present, then create a human readable description of what the function is.",
+      "field": "tor.detail.NoEdConsensus",
+      "value": "Relay was excluded from the consensus for some reason (e.g., misbehavior).",
+      "if": "ctx.tor?.description != null && ctx.tor?.description.contains('NoEdConsensus')"
+    }
+  },
+  {
+    "set": {
+      "ignore_failure": true,
+      "description": "If this value is present, then create a human readable description of what the function is.",
+      "field": "tor.detail.Running",
+      "value": "Relay is currently running. (Also appears as a top-level filter like in your URL.)",
+      "if": "ctx.tor?.description != null && ctx.tor?.description.contains('Running')"
+    }
+  },
+  {
+    "set": {
+      "ignore_failure": true,
+      "description": "If this value is present, then create a human readable description of what the function is.",
+      "field": "tor.detail.Stable",
+      "value": "Relay has been up for a long time consistently.",
+      "if": "ctx.tor?.description != null && ctx.tor?.description.contains('Stable')"
+    }
+  },
+  {
+    "set": {
+      "ignore_failure": true,
+      "description": "If this value is present, then create a human readable description of what the function is.",
+      "field": "tor.detail.Valid",
+      "value": "Relay is considered \"valid\" by directory authorities.",
+      "if": "ctx.tor?.description != null && ctx.tor?.description.contains('Valid')"
+    }
+  },
+  {
+    "set": {
+      "ignore_failure": true,
+      "description": "If this value is present, then create a human readable description of what the function is.",
+      "field": "tor.detail.Unnamed",
+      "value": "Relay does not have a configured nickname.",
+      "if": "ctx.tor?.description != null && ctx.tor?.description.contains('Unnamed')"
+    }
+  }
+]
+}
