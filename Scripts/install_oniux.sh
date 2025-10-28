@@ -16,6 +16,9 @@ export $(cat /root/.env | xargs)
 BASE64=$(echo -n "elastic:${ELASTICSEARCH_PASSWORD}" | base64)
 KIBANA_URL_WITHOUT_PROTOCOL=$(echo $KIBANA_URL | sed -e 's#http[s]\?://##g')
 
+# Install LLM Connector
+bash /opt/workshops/elastic-llm.sh -k false -m claude-sonnet-4 -d true
+
 # Add sdg user with superuser role
 curl -X POST "http://localhost:30920/_security/user/sdg" -H "Content-Type: application/json" -u "elastic:${ELASTICSEARCH_PASSWORD}" -d '{
   "password" : "changeme",
@@ -23,15 +26,6 @@ curl -X POST "http://localhost:30920/_security/user/sdg" -H "Content-Type: appli
   "full_name" : "SDG User",
   "email" : "sdg@elastic-pahlsoft.com"
 }'
-
-# Create Elastic-Agent policy
-curl -X POST "http://localhost:30002/api/fleet/agent_policies?sys_monitoring=true" --header "kbn-xsrf: true"  -H "Content-Type: application/json" -u "sdg:changeme" -d @/root/TOR-Node-Activity/Agent-Policies/SecOps.json
-
-# Load index template
-curl -X POST "http://localhost:30920/_index_template/logs-ti_tor.node_activity" -H "Content-Type: application/json" -u "sdg:changeme" -d @/root/TOR-Node-Activity/Index-Templates/logs-ti_tor.node_activity.json
-
-# Load ingest pipeline
-curl -X PUT "http://localhost:30920/_ingest/pipeline/logs-ti_tor.node_activity" -H "Content-Type: application/x-ndjson" -u "sdg:changeme" -d @/root/TOR-Node-Activity/Ingest-Pipelines/logs-ti_tor.node_activity.json
 
 #!/bin/bash
 set -e
@@ -65,3 +59,10 @@ source "$HOME/.cargo/env"
 # Install Oniux
 cargo install --git https://gitlab.torproject.org/tpo/core/oniux --tag v0.4.0 oniux
 sudo cp ~/.cargo/bin/oniux /usr/local/bin/
+
+# Create Elastic-Agent policy
+curl -X POST "http://localhost:30002/api/fleet/agent_policies?sys_monitoring=true" --header "kbn-xsrf: true"  -H "Content-Type: application/json" -u "sdg:changeme" -d @/root/TOR-Node-Activity/Agent-Policies/SecOps.json
+# Load index template
+curl -X POST "http://localhost:30920/_index_template/logs-ti_tor.node_activity" -H "Content-Type: application/json" -u "sdg:changeme" -d @/root/TOR-Node-Activity/Index-Templates/logs-ti_tor.node_activity.json
+# Load ingest pipeline
+curl -X PUT "http://localhost:30920/_ingest/pipeline/logs-ti_tor.node_activity" -H "Content-Type: application/x-ndjson" -u "sdg:changeme" -d @/root/TOR-Node-Activity/Ingest-Pipelines/logs-ti_tor.node_activity.json
