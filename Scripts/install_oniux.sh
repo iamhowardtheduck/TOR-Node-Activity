@@ -1,6 +1,10 @@
 #!/bin/bash
 set -e
 
+# Make APT completely non-interactive
+export DEBIAN_FRONTEND=noninteractive
+sudo debconf-set-selections <<< 'needrestart needrestart/restart select A'
+
 # Install build tools and a new GCC
 sudo apt-get update
 sudo apt-get install -y build-essential pkg-config libssl-dev gcc-12 g++-12
