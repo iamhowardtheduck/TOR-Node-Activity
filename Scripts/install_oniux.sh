@@ -24,6 +24,10 @@ curl -X POST "http://localhost:30920/_security/user/sdg" -H "Content-Type: appli
   "email" : "sdg@elastic-pahlsoft.com"
 }'
 
+# Create Elastic-Agent policy
+curl -X POST "http://localhost:30002/api/fleet/agent_policies?sys_monitoring=true" --header "kbn-xsrf: true"  -H "Content-Type: application/json" -u "sdg:changeme" -d @/root/SDGv2/Agent-Policies/SecOps.json
+
+
 #!/bin/bash
 set -e
 
