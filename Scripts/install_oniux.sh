@@ -31,7 +31,7 @@ curl -X POST "http://localhost:30002/api/fleet/agent_policies?sys_monitoring=tru
 curl -X POST "http://localhost:30920/_index_template/logs-ti_tor.node_activity" -H "Content-Type: application/json" -u "sdg:changeme" -d @/root/TOR-Node-Activity/Index-Templates/logs-ti_tor.node_activity.json
 
 # Load ingest pipeline
-curl -X PUT "http://localhost:30920/_ingest/pipeline/logs-ti_tor.node_activity" -H "Content-Type: application/x-ndjson" -u "sdg:changeme" -d @/root/SDGv2/Ingest-Pipelines/logs-ti_tor.node_activity.json
+curl -X PUT "http://localhost:30920/_ingest/pipeline/logs-ti_tor.node_activity" -H "Content-Type: application/x-ndjson" -u "sdg:changeme" -d @/root/TOR-Node-Activity/Ingest-Pipelines/logs-ti_tor.node_activity.json
 
 #!/bin/bash
 set -e
