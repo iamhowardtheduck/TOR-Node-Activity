@@ -1,0 +1,665 @@
+{
+  "priority": 200,
+  "template": {
+    "settings": {
+      "index": {
+        "mode": "logsdb",
+        "number_of_replicas": "1",
+        "default_pipeline": "logs-ti_tor.node_activity"
+      }
+    },
+    "mappings": {
+      "properties": {
+        "data_stream": {
+          "type": "object",
+          "properties": {
+            "dataset": {
+              "eager_global_ordinals": false,
+              "norms": false,
+              "index": true,
+              "store": false,
+              "type": "keyword",
+              "split_queries_on_whitespace": false,
+              "index_options": "docs",
+              "doc_values": true
+            },
+            "namespace": {
+              "type": "keyword"
+            },
+            "type": {
+              "type": "keyword"
+            }
+          }
+        },
+        "event": {
+          "type": "object",
+          "properties": {
+            "category": {
+              "eager_global_ordinals": false,
+              "norms": false,
+              "index": true,
+              "store": false,
+              "type": "keyword",
+              "split_queries_on_whitespace": false,
+              "index_options": "docs",
+              "doc_values": true
+            },
+            "dataset": {
+              "eager_global_ordinals": false,
+              "norms": false,
+              "index": true,
+              "store": false,
+              "type": "keyword",
+              "split_queries_on_whitespace": false,
+              "index_options": "docs",
+              "doc_values": true
+            },
+            "kind": {
+              "eager_global_ordinals": false,
+              "norms": false,
+              "index": true,
+              "store": false,
+              "type": "keyword",
+              "split_queries_on_whitespace": false,
+              "index_options": "docs",
+              "doc_values": true
+            },
+            "module": {
+              "eager_global_ordinals": false,
+              "norms": false,
+              "index": true,
+              "store": false,
+              "type": "keyword",
+              "split_queries_on_whitespace": false,
+              "index_options": "docs",
+              "doc_values": true
+            },
+            "type": {
+              "eager_global_ordinals": false,
+              "norms": false,
+              "index": true,
+              "store": false,
+              "type": "keyword",
+              "split_queries_on_whitespace": false,
+              "index_options": "docs",
+              "doc_values": true
+            }
+          }
+        },
+        "threat": {
+          "type": "object",
+          "properties": {
+            "indicator": {
+              "type": "object",
+              "properties": {
+                "as": {
+                  "type": "object",
+                  "properties": {
+                    "network": {
+                      "coerce": true,
+                      "index": true,
+                      "store": false,
+                      "type": "ip_range"
+                    },
+                    "number": {
+                      "coerce": true,
+                      "index": true,
+                      "ignore_malformed": false,
+                      "store": false,
+                      "type": "long",
+                      "doc_values": true
+                    },
+                    "organization": {
+                      "dynamic": true,
+                      "type": "object",
+                      "enabled": true,
+                      "subobjects": true,
+                      "properties": {
+                        "name": {
+                          "eager_global_ordinals": false,
+                          "norms": false,
+                          "index": true,
+                          "store": false,
+                          "type": "keyword",
+                          "split_queries_on_whitespace": false,
+                          "index_options": "docs",
+                          "doc_values": true
+                        }
+                      }
+                    }
+                  }
+                },
+                "first_seen": {
+                  "format": "strict_date_optional_time||epoch_millis||yyyy-MM-dd HH:mm:ss",
+                  "index": true,
+                  "ignore_malformed": false,
+                  "store": false,
+                  "type": "date",
+                  "doc_values": true
+                },
+                "geo": {
+                  "type": "object",
+                  "properties": {
+                    "city_name": {
+                      "eager_global_ordinals": false,
+                      "norms": false,
+                      "index": true,
+                      "store": false,
+                      "type": "keyword",
+                      "split_queries_on_whitespace": false,
+                      "index_options": "docs",
+                      "doc_values": true
+                    },
+                    "continent_name": {
+                      "eager_global_ordinals": false,
+                      "norms": false,
+                      "index": true,
+                      "store": false,
+                      "type": "keyword",
+                      "split_queries_on_whitespace": false,
+                      "index_options": "docs",
+                      "doc_values": true
+                    },
+                    "country_iso_code": {
+                      "eager_global_ordinals": false,
+                      "norms": false,
+                      "index": true,
+                      "store": false,
+                      "type": "keyword",
+                      "split_queries_on_whitespace": false,
+                      "index_options": "docs",
+                      "doc_values": true
+                    },
+                    "country_name": {
+                      "eager_global_ordinals": false,
+                      "norms": false,
+                      "index": true,
+                      "store": false,
+                      "type": "keyword",
+                      "split_queries_on_whitespace": false,
+                      "index_options": "docs",
+                      "doc_values": true
+                    },
+                    "location": {
+                      "ignore_malformed": false,
+                      "type": "geo_point",
+                      "ignore_z_value": true
+                    },
+                    "region_iso_code": {
+                      "eager_global_ordinals": false,
+                      "norms": false,
+                      "index": true,
+                      "store": false,
+                      "type": "keyword",
+                      "split_queries_on_whitespace": false,
+                      "index_options": "docs",
+                      "doc_values": true
+                    },
+                    "region_name": {
+                      "eager_global_ordinals": false,
+                      "norms": false,
+                      "index": true,
+                      "store": false,
+                      "type": "keyword",
+                      "index_options": "docs",
+                      "split_queries_on_whitespace": false,
+                      "doc_values": true
+                    }
+                  }
+                },
+                "ip": {
+                  "index": true,
+                  "store": false,
+                  "type": "ip",
+                  "doc_values": true
+                },
+                "last_changed": {
+                  "format": "strict_date_optional_time||epoch_millis||yyyy-MM-dd HH:mm:ss",
+                  "index": true,
+                  "ignore_malformed": false,
+                  "store": false,
+                  "type": "date",
+                  "doc_values": true
+                },
+                "last_restarted": {
+                  "format": "strict_date_optional_time||epoch_millis||yyyy-MM-dd HH:mm:ss",
+                  "index": true,
+                  "ignore_malformed": false,
+                  "store": false,
+                  "type": "date",
+                  "doc_values": true
+                },
+                "last_seen": {
+                  "format": "strict_date_optional_time||epoch_millis||yyyy-MM-dd HH:mm:ss",
+                  "index": true,
+                  "ignore_malformed": false,
+                  "store": false,
+                  "type": "date",
+                  "doc_values": true
+                }
+              }
+            }
+          }
+        },
+        "tor": {
+          "type": "object",
+          "properties": {
+            "as": {
+              "type": "object",
+              "properties": {
+                "number": {
+                  "type": "long"
+                },
+                "organization": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "keyword"
+                    }
+                  }
+                }
+              }
+            },
+            "bandwidth": {
+              "type": "object",
+              "properties": {
+                "advertised": {
+                  "type": "long"
+                },
+                "burst": {
+                  "type": "long"
+                },
+                "observed": {
+                  "type": "long"
+                },
+                "rate": {
+                  "type": "long"
+                }
+              }
+            },
+            "consensus": {
+              "type": "object",
+              "properties": {
+                "weight": {
+                  "type": "long"
+                },
+                "weight_fraction": {
+                  "type": "long"
+                }
+              }
+            },
+            "contact": {
+              "type": "object",
+              "properties": {
+                "original": {
+                  "type": "text"
+                }
+              }
+            },
+            "description": {
+              "eager_global_ordinals": false,
+              "index_phrases": false,
+              "fielddata": false,
+              "norms": true,
+              "index": true,
+              "store": false,
+              "type": "text",
+              "index_options": "positions"
+            },
+            "detail": {
+              "type": "object",
+              "properties": {
+                "Authority": {
+                  "type": "text"
+                },
+                "BadExit": {
+                  "type": "text"
+                },
+                "Exit": {
+                  "type": "text"
+                },
+                "Fast": {
+                  "type": "text"
+                },
+                "Guard": {
+                  "type": "text"
+                },
+                "HSDir": {
+                  "type": "text"
+                },
+                "NoEdConsensus": {
+                  "type": "text"
+                },
+                "Running": {
+                  "type": "text"
+                },
+                "Stable": {
+                  "type": "text"
+                },
+                "Unnamed": {
+                  "type": "text"
+                },
+                "Valid": {
+                  "type": "text"
+                }
+              }
+            },
+            "exit": {
+              "type": "object",
+              "properties": {
+                "as": {
+                  "type": "object",
+                  "properties": {
+                    "network": {
+                      "type": "ip_range"
+                    },
+                    "number": {
+                      "type": "long"
+                    },
+                    "organization": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "keyword"
+                        }
+                      }
+                    }
+                  }
+                },
+                "geo": {
+                  "type": "object",
+                  "properties": {
+                    "city_name": {
+                      "type": "keyword"
+                    },
+                    "continent_name": {
+                      "type": "keyword"
+                    },
+                    "country_iso_code": {
+                      "type": "keyword"
+                    },
+                    "country_name": {
+                      "type": "keyword"
+                    },
+                    "location": {
+                      "type": "geo_point"
+                    },
+                    "region_iso_code": {
+                      "type": "keyword"
+                    },
+                    "region_name": {
+                      "type": "keyword"
+                    }
+                  }
+                },
+                "ip": {
+                  "type": "ip"
+                },
+                "policy": {
+                  "type": "object",
+                  "properties": {
+                    "ipv4": {
+                      "type": "object",
+                      "properties": {
+                        "accept": {
+                          "type": "text"
+                        },
+                        "reject": {
+                          "type": "text"
+                        }
+                      }
+                    },
+                    "ipv6": {
+                      "type": "object",
+                      "properties": {
+                        "accept": {
+                          "type": "text"
+                        },
+                        "reject": {
+                          "type": "text"
+                        }
+                      }
+                    }
+                  }
+                },
+                "probability": {
+                  "type": "half_float"
+                }
+              }
+            },
+            "exit_policy": {
+              "eager_global_ordinals": false,
+              "index_phrases": false,
+              "fielddata": false,
+              "norms": true,
+              "index": true,
+              "store": false,
+              "type": "text",
+              "index_options": "positions"
+            },
+            "family": {
+              "type": "object",
+              "properties": {
+                "alleged": {
+                  "eager_global_ordinals": false,
+                  "index_phrases": false,
+                  "fielddata": false,
+                  "norms": true,
+                  "index": true,
+                  "store": false,
+                  "type": "text",
+                  "index_options": "positions"
+                },
+                "effective": {
+                  "eager_global_ordinals": false,
+                  "index_phrases": false,
+                  "fielddata": false,
+                  "norms": true,
+                  "index": true,
+                  "store": false,
+                  "type": "text",
+                  "index_options": "positions"
+                },
+                "indirect": {
+                  "eager_global_ordinals": false,
+                  "index_phrases": false,
+                  "fielddata": false,
+                  "norms": true,
+                  "index": true,
+                  "store": false,
+                  "type": "text",
+                  "index_options": "positions"
+                }
+              }
+            },
+            "first_seen": {
+              "format": "strict_date_optional_time||epoch_millis||yyyy-MM-dd HH:mm:ss",
+              "index": true,
+              "ignore_malformed": false,
+              "store": false,
+              "type": "date",
+              "doc_values": true
+            },
+            "guard": {
+              "type": "object",
+              "properties": {
+                "probability": {
+                  "type": "half_float"
+                }
+              }
+            },
+            "hostname": {
+              "type": "object",
+              "properties": {
+                "unverified": {
+                  "type": "keyword"
+                },
+                "verified": {
+                  "type": "keyword"
+                }
+              }
+            },
+            "last_changed": {
+              "format": "strict_date_optional_time||epoch_millis||yyyy-MM-dd HH:mm:ss",
+              "index": true,
+              "ignore_malformed": false,
+              "store": false,
+              "type": "date",
+              "doc_values": true
+            },
+            "last_restarted": {
+              "format": "strict_date_optional_time||epoch_millis||yyyy-MM-dd HH:mm:ss",
+              "index": true,
+              "ignore_malformed": false,
+              "store": false,
+              "type": "date",
+              "doc_values": true
+            },
+            "last_seen": {
+              "format": "strict_date_optional_time||epoch_millis||yyyy-MM-dd HH:mm:ss",
+              "index": true,
+              "ignore_malformed": false,
+              "store": false,
+              "type": "date",
+              "doc_values": true
+            },
+            "measured": {
+              "type": "boolean"
+            },
+            "middle": {
+              "type": "object",
+              "properties": {
+                "probability": {
+                  "type": "half_float"
+                }
+              }
+            },
+            "name": {
+              "type": "keyword"
+            },
+            "overload": {
+              "format": "strict_date_optional_time||epoch_millis||epoch_second",
+              "index": true,
+              "ignore_malformed": false,
+              "store": false,
+              "type": "date",
+              "doc_values": true
+            },
+            "platform": {
+              "type": "keyword"
+            },
+            "recommended_version": {
+              "type": "boolean"
+            },
+            "routing": {
+              "type": "object",
+              "properties": {
+                "addresses": {
+                  "type": "text"
+                },
+                "ipv4": {
+                  "type": "object",
+                  "properties": {
+                    "geo": {
+                      "type": "object",
+                      "properties": {
+                        "city_name": {
+                          "type": "keyword"
+                        },
+                        "continent_name": {
+                          "type": "keyword"
+                        },
+                        "country_iso_code": {
+                          "type": "keyword"
+                        },
+                        "country_name": {
+                          "type": "keyword"
+                        },
+                        "location": {
+                          "type": "geo_point"
+                        },
+                        "region_iso_code": {
+                          "type": "keyword"
+                        },
+                        "region_name": {
+                          "type": "keyword"
+                        }
+                      }
+                    },
+                    "ip": {
+                      "type": "ip"
+                    },
+                    "port": {
+                      "type": "long"
+                    }
+                  }
+                },
+                "ipv6": {
+                  "type": "object",
+                  "properties": {
+                    "geo": {
+                      "type": "object",
+                      "properties": {
+                        "city_name": {
+                          "type": "keyword"
+                        },
+                        "continent_name": {
+                          "type": "keyword"
+                        },
+                        "country_iso_code": {
+                          "type": "keyword"
+                        },
+                        "country_name": {
+                          "type": "keyword"
+                        },
+                        "location": {
+                          "type": "geo_point"
+                        },
+                        "region_iso_code": {
+                          "type": "keyword"
+                        },
+                        "region_name": {
+                          "type": "keyword"
+                        }
+                      }
+                    },
+                    "ip": {
+                      "type": "ip"
+                    },
+                    "port": {
+                      "type": "long"
+                    }
+                  }
+                }
+              }
+            },
+            "running": {
+              "type": "boolean"
+            },
+            "version": {
+              "type": "keyword"
+            },
+            "version_status": {
+              "type": "keyword"
+            }
+          }
+        }
+      }
+    },
+    "lifecycle": {
+      "enabled": true
+    }
+  },
+  "index_patterns": [
+    "logs-ti_tor.node_activity*"
+  ],
+  "data_stream": {
+    "hidden": false,
+    "allow_custom_routing": false
+  },
+  "composed_of": [
+     "logs-elastic_agent@package"
+  ],
+  "ignore_missing_component_templates": [],
+  "allow_auto_create": true
+}
