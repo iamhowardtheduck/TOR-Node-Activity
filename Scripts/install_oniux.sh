@@ -66,3 +66,5 @@ curl -X POST "http://localhost:30002/api/fleet/agent_policies" -H "kbn-xsrf: tru
 curl -X POST "http://localhost:30920/_index_template/logs-ti_tor.node_activity" -H "Content-Type: application/json" -u "sdg:changeme" -d @/root/TOR-Node-Activity/Index-Templates/logs-ti_tor.node_activity.json
 # Load ingest pipeline
 curl -X PUT "http://localhost:30920/_ingest/pipeline/logs-ti_tor.node_activity" -H "Content-Type: application/x-ndjson" -u "sdg:changeme" -d @/root/TOR-Node-Activity/Ingest-Pipelines/logs-ti_tor.node_activity.json
+# Load pre-built Elastic Security rules
+curl -X PUT "http://localhost:30001/api/detection_engine/rules/prepackaged" -u "sdg:changme"  --header "kbn-xsrf: true" -H "Content-Type: application/json"  -d '{}'
