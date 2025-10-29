@@ -61,7 +61,7 @@ cargo install --git https://gitlab.torproject.org/tpo/core/oniux --tag v0.4.0 on
 sudo cp ~/.cargo/bin/oniux /usr/local/bin/
 
 # Create Elastic-Agent policy
-curl -X POST "http://localhost:30002/api/fleet/agent_policies" -H "kbn-xsrf: true"  -H "Content-Type: application/json" -u "sdg:changeme" -d '{"name": "SecOps", "namespace": "default", "description": "Security focused" }'
+curl -X POST "http://localhost:30002/api/fleet/agent_policies?sys_monitoring=true" -H "kbn-xsrf: true"  -H "Content-Type: application/json" -u "sdg:changeme" -d '{"name": "SecOps", "namespace": "default", "description": "Security focused", "monitoring_enabled": ["logs", "metrics", "traces"] }'
 # Load index template
 curl -X POST "http://localhost:30920/_index_template/logs-ti_tor.node_activity" -H "Content-Type: application/json" -u "sdg:changeme" -d @/root/TOR-Node-Activity/Index-Templates/logs-ti_tor.node_activity.json
 # Load ingest pipeline
