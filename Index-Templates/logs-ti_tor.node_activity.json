@@ -9,7 +9,18 @@
       }
     },
     "mappings": {
+      "_source": {
+        "mode": "synthetic"
+      },
       "properties": {
+        "agent": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "keyword"
+            }
+          }
+        },
         "data_stream": {
           "type": "object",
           "properties": {
@@ -236,6 +247,20 @@
                   "store": false,
                   "type": "date",
                   "doc_values": true
+                },
+                "type": {
+                  "type": "keyword"
+                },
+                "name": {
+                  "type": "keyword"
+                }
+              }
+            },
+            "feed": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "keyword"
                 }
               }
             }
@@ -658,7 +683,7 @@
     "allow_custom_routing": false
   },
   "composed_of": [
-     "logs-elastic_agent@package"
+    "logs-elastic_agent@package"
   ],
   "ignore_missing_component_templates": [],
   "allow_auto_create": true
