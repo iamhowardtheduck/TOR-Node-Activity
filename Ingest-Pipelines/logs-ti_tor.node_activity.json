@@ -27,9 +27,9 @@
     },
     {
       "set": {
+        "ignore_failure": true,
         "field": "threat.feed.name",
-        "value": "TOR Node Activity",
-        "ignore_failure": true
+        "value": "TOR Node Activity"
       }
     },
     {
@@ -238,114 +238,121 @@
     },
     {
       "set": {
-        "field": "threat.indicator.as.network",
         "ignore_failure": true,
+        "field": "threat.indicator.as.network",
         "copy_from": "tor.exit.as.network"
       }
     },
     {
       "set": {
-        "field": "threat.indicator.as.number",
-        "copy_from": "tor.exit.as.number",
-        "ignore_failure": true
-      }
-    },
-    {
-      "set": {
-        "field": "threat.indicator.as.organization.name",
-        "copy_from": "tor.exit.as.organization.name",
-        "ignore_failure": true
-      }
-    },
-    {
-      "set": {
-        "field": "threat.indicator.first_seen",
-        "copy_from": "tor.first_seen",
-        "ignore_failure": true
-      }
-    },
-    {
-      "set": {
-        "field": "threat.indicator.geo.city_name",
-        "copy_from": "tor.exit.geo.city_name",
-        "ignore_failure": true
-      }
-    },
-    {
-      "set": {
-        "field": "threat.indicator.geo.continent_name",
-        "copy_from": "tor.exit.geo.continent_name",
-        "ignore_failure": true
-      }
-    },
-    {
-      "set": {
-        "field": "threat.indicator.geo.country_iso_code",
-        "copy_from": "tor.exit.geo.country_iso_code",
-        "ignore_failure": true
-      }
-    },
-    {
-      "set": {
-        "field": "threat.indicator.geo.country_name",
-        "copy_from": "tor.exit.geo.country_name",
-        "ignore_failure": true
-      }
-    },
-    {
-      "set": {
-        "field": "threat.indicator.geo.location",
-        "copy_from": "tor.exit.geo.location",
-        "ignore_failure": true
-      }
-    },
-    {
-      "set": {
-        "field": "threat.indicator.geo.region_iso_code",
-        "copy_from": "tor.exit.geo.region_iso_code",
-        "ignore_failure": true
-      }
-    },
-    {
-      "set": {
-        "field": "threat.indicator.geo.region_name",
-        "copy_from": "tor.exit.geo.region_name",
-        "ignore_failure": true
-      }
-    },
-    {
-      "set": {
-        "field": "threat.indicator.last_changed",
-        "copy_from": "tor.last_changed",
-        "ignore_failure": true
-      }
-    },
-    {
-      "set": {
-        "field": "threat.indicator.last_restarted",
-        "copy_from": "tor.last_restarted",
-        "ignore_failure": true
-      }
-    },
-    {
-      "set": {
-        "field": "threat.indicator.last_seen",
-        "copy_from": "tor.last_seen",
-        "ignore_failure": true
-      }
-    },  
-    {
-      "set": {
-        "field": "threat.indicator.name",
         "ignore_failure": true,
-        "copy_from": "tor.name"
+        "field": "threat.indicator.as.number",
+        "copy_from": "tor.exit.as.number"
       }
     },
     {
       "set": {
+        "ignore_failure": true,
+        "field": "threat.indicator.as.organization.name",
+        "copy_from": "tor.exit.as.organization.name"
+      }
+    },
+    {
+      "set": {
+        "ignore_failure": true,
+        "field": "threat.indicator.first_seen",
+        "copy_from": "tor.first_seen"
+      }
+    },
+    {
+      "set": {
+        "ignore_failure": true,
+        "field": "threat.indicator.geo.city_name",
+        "copy_from": "tor.exit.geo.city_name"
+      }
+    },
+    {
+      "set": {
+        "ignore_failure": true,
+        "field": "threat.indicator.geo.continent_name",
+        "copy_from": "tor.exit.geo.continent_name"
+      }
+    },
+    {
+      "set": {
+        "ignore_failure": true,
+        "field": "threat.indicator.geo.country_iso_code",
+        "copy_from": "tor.exit.geo.country_iso_code"
+      }
+    },
+    {
+      "set": {
+        "ignore_failure": true,
+        "field": "threat.indicator.geo.country_name",
+        "copy_from": "tor.exit.geo.country_name"
+      }
+    },
+    {
+      "set": {
+        "ignore_failure": true,
+        "field": "threat.indicator.geo.location",
+        "copy_from": "tor.exit.geo.location"
+      }
+    },
+    {
+      "set": {
+        "ignore_failure": true,
+        "field": "threat.indicator.geo.region_iso_code",
+        "copy_from": "tor.exit.geo.region_iso_code"
+      }
+    },
+    {
+      "set": {
+        "ignore_failure": true,
+        "field": "threat.indicator.geo.region_name",
+        "copy_from": "tor.exit.geo.region_name"
+      }
+    },
+    {
+      "set": {
+        "ignore_failure": true,
+        "field": "threat.indicator.last_changed",
+        "copy_from": "tor.last_changed"
+      }
+    },
+    {
+      "set": {
+        "ignore_failure": true,
+        "field": "threat.indicator.last_restarted",
+        "copy_from": "tor.last_restarted"
+      }
+    },
+    {
+      "set": {
+        "ignore_failure": true,
+        "field": "threat.indicator.last_seen",
+        "copy_from": "tor.last_seen"
+      }
+    },
+    {
+      "set": {
+        "ignore_failure": true,
+        "field": "threat.feed.name",
+        "value": "TOR Node Activity"
+      }
+    },
+    {
+      "set": {
+        "ignore_failure": true,
+        "field": "threat.indicator.name",
+        "copy_from": "tor.routing.ipv4.ip"
+      }
+    },
+    {
+      "set": {
+        "ignore_failure": true,
         "field": "threat.indicator.type",
-        "value": "ipv4-addr",
-        "ignore_failure": true
+        "value": "ipv4-addr"
       }
     }
   ],
