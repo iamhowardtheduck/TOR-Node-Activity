@@ -57,7 +57,7 @@ curl https://sh.rustup.rs -sSf | sh -s -- -y
 source "$HOME/.cargo/env"
 
 # Install Oniux
-cargo install --git https://gitlab.torproject.org/tpo/core/oniux --tag v0.4.0 oniux
+cargo install --git https://gitlab.torproject.org/tpo/core/oniux.git --tag v0.4.0 --locked -v
 sudo cp ~/.cargo/bin/oniux /usr/local/bin/
 
 # Create Elastic-Agent policy
