@@ -63,8 +63,8 @@ sudo cp ~/.cargo/bin/oniux /usr/local/bin/
 # Create Elastic-Agent policy
 curl -X POST "https://kb.elastic.lab:443/api/fleet/agent_policies?sys_monitoring=true" -H "kbn-xsrf: true"  -H "Content-Type: application/json" -u "sdg:changeme" -d '{"name": "SecOps", "namespace": "default", "description": "Security focused", "monitoring_enabled": ["logs", "metrics", "traces"] }'
 # Load index template
-curl -X POST "https://es.elastic.lab:443/_index_template/logs-ti_tor.node_activity" -H "Content-Type: application/json" -u "sdg:changeme" -d @/root/TOR-Node-Activity/Index-Templates/logs-ti_tor.node_activity.json
+curl -X POST "https://es.elastic.lab:443/_index_template/logs-ti_tor.node_activity" -H "Content-Type: application/json" -u "sdg:changeme" -d @/home/elastic/TOR-Node-Activity/Index-Templates/logs-ti_tor.node_activity.json
 # Load ingest pipeline
-curl -X PUT "https://es.elastic.lab:443/_ingest/pipeline/logs-ti_tor.node_activity" -H "Content-Type: application/x-ndjson" -u "sdg:changeme" -d @/root/TOR-Node-Activity/Ingest-Pipelines/logs-ti_tor.node_activity.json
+curl -X PUT "https://es.elastic.lab:443/_ingest/pipeline/logs-ti_tor.node_activity" -H "Content-Type: application/x-ndjson" -u "sdg:changeme" -d @/home/elastic/TOR-Node-Activity/Ingest-Pipelines/logs-ti_tor.node_activity.json
 # Load pre-built Elastic Security rules
 curl -X PUT "https://kb.elastic.lab:443/api/detection_engine/rules/prepackaged" -u "sdg:changme"  --header "kbn-xsrf: true" -H "Content-Type: application/json"  -d '{}'
