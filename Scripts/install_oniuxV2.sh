@@ -7,7 +7,7 @@ echo 'ELASTICSEARCH_URL="https://es.elastic.lab:443"' >> /root/.env
 echo 'KIBANA_URL="https://kb.elastic.lab:443"' >> /root/.env
 echo 'BUILD_NUMBER="10"' >> /root/.env
 echo 'ELASTIC_VERSION="9.1.0"' >> /root/.env
-echo 'ELASTIC_APM_SERVER_URL=http://apm.default.svc:8200' >> /root/.env
+#echo 'ELASTIC_APM_SERVER_URL=http://apm.default.svc:8200' >> /root/.env
 echo 'ELASTIC_APM_SECRET_TOKEN=pkcQROVMCzYypqXs0b' >> /root/.env
 
 # Set up environment
