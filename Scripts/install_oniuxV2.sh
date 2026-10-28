@@ -67,4 +67,4 @@ curl -X POST "https://es.elastic.lab:443/_index_template/logs-ti_tor.node_activi
 # Load ingest pipeline
 curl -X PUT "https://es.elastic.lab:443/_ingest/pipeline/logs-ti_tor.node_activity" -H "Content-Type: application/x-ndjson" -u "sdg:changeme" -d @/root/TOR-Node-Activity/Ingest-Pipelines/logs-ti_tor.node_activity.json
 # Load pre-built Elastic Security rules
-curl -X PUT "http://localhost:30001/api/detection_engine/rules/prepackaged" -u "sdg:changme"  --header "kbn-xsrf: true" -H "Content-Type: application/json"  -d '{}'
+curl -X PUT "https://kb.elastic.lab:443/api/detection_engine/rules/prepackaged" -u "sdg:changme"  --header "kbn-xsrf: true" -H "Content-Type: application/json"  -d '{}'
