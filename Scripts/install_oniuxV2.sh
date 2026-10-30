@@ -60,6 +60,8 @@ source "$HOME/.cargo/env"
 cargo install --git https://gitlab.torproject.org/tpo/core/oniux.git --tag v0.4.0 --locked -v
 sudo cp ~/.cargo/bin/oniux /usr/local/bin/
 
+# Disabled dark mode for Kibana
+curl -X POST "https://kb.elastic.lab:443/api/kibana/settings/theme:darkMode" -H "kbn-xsrf: true"  -H "Content-Type: application/json" -u "sdg:changeme" -d '{"value": "disabled"}'
 # Create Elastic-Agent policy
 curl -X POST "https://kb.elastic.lab:443/api/fleet/agent_policies?sys_monitoring=true" -H "kbn-xsrf: true"  -H "Content-Type: application/json" -u "sdg:changeme" -d '{"name": "SecOps", "namespace": "default", "description": "Security focused", "monitoring_enabled": ["logs", "metrics", "traces"] }'
 # Load index template
