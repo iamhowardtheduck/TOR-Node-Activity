@@ -27,8 +27,8 @@ curl -X POST "https://es.elastic.lab:443/_security/user/sdg" -H "Content-Type: a
   "email" : "sdg@elastic-pahlsoft.com"
 }'
 
-# Disabled dark mode for Kibana
-curl -X POST "https://kb.elastic.lab:443/api/kibana/settings/theme:darkMode" -H "kbn-xsrf: true"  -H "Content-Type: application/json" -u "sdg:changeme" -d '{"value": "disabled"}'
+# Disabled dark mode for Kibana - (STATUS: Not working for some reason, will investigate later)
+#curl -X POST "https://kb.elastic.lab:443/api/kibana/settings/theme:darkMode" -H "kbn-xsrf: true"  -H "Content-Type: application/json" -u "sdg:changeme" -d '{"value": "disabled"}'
 # Create Elastic-Agent policy - (STATUS: NO LONGER NEEDED)
 #curl -X POST "https://kb.elastic.lab:443/api/fleet/agent_policies?sys_monitoring=true" -H "kbn-xsrf: true"  -H "Content-Type: application/json" -u "sdg:changeme" -d '{"name": "SecOps", "namespace": "default", "description": "Security focused", "monitoring_enabled": ["logs", "metrics", "traces"] }'
 # Load index template
