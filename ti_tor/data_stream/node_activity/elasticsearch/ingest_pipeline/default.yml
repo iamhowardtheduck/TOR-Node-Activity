@@ -1,0 +1,268 @@
+---
+description: Pipeline for parsing TOR node activity from the Onionoo details API.
+processors:
+  - set:
+      field: ecs.version
+      value: "8.11.0"
+  - set:
+      field: event.kind
+      value: enrichment
+  - set:
+      field: event.category
+      value: [threat]
+  - set:
+      field: event.type
+      value: [indicator]
+  - set:
+      field: event.module
+      value: ti_tor
+  - set:
+      field: event.ingested
+      copy_from: _ingest.timestamp
+  - set:
+      field: threat.feed.name
+      value: TOR Node Activity
+  # ---- decode the raw Onionoo relay object ----
+  - rename:
+      field: message
+      target_field: event.original
+      ignore_missing: true
+      override: true
+  - json:
+      field: event.original
+      target_field: _tmp.relay
+      if: ctx.event?.original != null
+  - script:
+      description: Map Onionoo relay fields onto tor.* (replaces the Beats rename processors of the old Custom HTTP JSON policy).
+      lang: painless
+      if: ctx._tmp?.relay instanceof Map
+      params:
+        map:
+          advertised_bandwidth: bandwidth.advertised
+          bandwidth_burst: bandwidth.burst
+          bandwidth_rate: bandwidth.rate
+          observed_bandwidth: bandwidth.observed
+          as_name: as.organization.name
+          consensus_weight: consensus.weight
+          consensus_weight_fraction: consensus.weight_fraction
+          contact: contact.original
+          alleged_family: family.alleged
+          effective_family: family.effective
+          indirect_family: family.indirect
+          exit_addresses: exit.ip
+          exit_policy: exit_policy
+          exit_probability: exit.probability
+          fingerprint: fingerprint
+          first_seen: first_seen
+          flags: description
+          guard_probability: guard.probability
+          hibernating: hibernating
+          last_changed_address_or_port: last_changed
+          last_restarted: last_restarted
+          last_seen: last_seen
+          measured: measured
+          middle_probability: middle.probability
+          nickname: name
+          or_addresses: routing.addresses
+          overload_general_timestamp: overload
+          platform: platform
+          recommended_version: recommended_version
+          running: running
+          unverified_host_names: hostname.unverified
+          verified_host_names: hostname.verified
+          version: version
+          version_status: version_status
+      source: |
+        Map relay = ctx._tmp.relay;
+        if (ctx.tor == null) { ctx.tor = new HashMap(); }
+        for (def e : params.map.entrySet()) {
+          def v = relay.get(e.getKey());
+          if (v == null) { continue; }
+          Map cur = ctx.tor;
+          String[] parts = e.getValue().splitOnToken('.');
+          for (int i = 0; i < parts.length - 1; i++) {
+            if (!(cur.get(parts[i]) instanceof Map)) { cur.put(parts[i], new HashMap()); }
+            cur = cur.get(parts[i]);
+          }
+          cur.put(parts[parts.length - 1], v);
+        }
+        def asn = relay.get('as');
+        if (asn != null) {
+          String a = asn.toString();
+          if (a.startsWith('AS')) { a = a.substring(2); }
+          try {
+            if (!(ctx.tor.as instanceof Map)) { ctx.tor.as = new HashMap(); }
+            ctx.tor.as.number = Long.parseLong(a);
+          } catch (Exception ex) {}
+        }
+        for (String pol : ['exit_policy_summary', 'exit_policy_v6_summary']) {
+          def s = relay.get(pol);
+          if (!(s instanceof Map)) { continue; }
+          String fam = pol == 'exit_policy_summary' ? 'ipv4' : 'ipv6';
+          if (!(ctx.tor.exit instanceof Map)) { ctx.tor.exit = new HashMap(); }
+          if (!(ctx.tor.exit.policy instanceof Map)) { ctx.tor.exit.policy = new HashMap(); }
+          Map m = new HashMap();
+          if (s.accept != null) { m.accept = s.accept; }
+          if (s.reject != null) { m.reject = s.reject; }
+          ctx.tor.exit.policy[fam] = m;
+        }
+  - remove:
+      field: _tmp
+      ignore_missing: true
+  # ---- exit address enrichment ----
+  - geoip:
+      field: tor.exit.ip
+      target_field: tor.exit.geo
+      ignore_missing: true
+      ignore_failure: true
+  - geoip:
+      database_file: GeoLite2-ASN.mmdb
+      field: tor.exit.ip
+      target_field: tor.exit.as
+      properties: [asn, organization_name, network]
+      ignore_missing: true
+      ignore_failure: true
+  - rename:
+      field: tor.exit.as.asn
+      target_field: tor.exit.as.number
+      ignore_missing: true
+  - rename:
+      field: tor.exit.as.organization_name
+      target_field: tor.exit.as.organization.name
+      ignore_missing: true
+  # ---- OR (routing) addresses: "1.2.3.4:443", "[2001:db8::1]:443" ----
+  - script:
+      description: Split the first IPv4 and IPv6 OR address into ip/port.
+      lang: painless
+      if: ctx.tor?.routing?.addresses != null
+      source: |
+        def addrs = ctx.tor.routing.addresses;
+        if (!(addrs instanceof List)) { addrs = [addrs]; }
+        for (def a : addrs) {
+          if (!(a instanceof String)) { continue; }
+          String fam; String ip; String port;
+          if (a.startsWith('[')) {
+            int close = a.indexOf(']');
+            if (close < 0) { continue; }
+            fam = 'ipv6'; ip = a.substring(1, close);
+            port = close + 2 <= a.length() ? a.substring(close + 2) : null;
+          } else {
+            int colon = a.lastIndexOf(':');
+            fam = 'ipv4';
+            ip = colon < 0 ? a : a.substring(0, colon);
+            port = colon < 0 ? null : a.substring(colon + 1);
+          }
+          if (ctx.tor.routing[fam] != null) { continue; }
+          Map m = ['ip': ip];
+          if (port != null && port != '') {
+            try { m.port = Long.parseLong(port); } catch (Exception ex) {}
+          }
+          ctx.tor.routing[fam] = m;
+        }
+  - geoip:
+      field: tor.routing.ipv4.ip
+      target_field: tor.routing.ipv4.geo
+      ignore_missing: true
+      ignore_failure: true
+  - geoip:
+      field: tor.routing.ipv6.ip
+      target_field: tor.routing.ipv6.geo
+      ignore_missing: true
+      ignore_failure: true
+  # The original pipeline dropped tor.routing.addresses before fingerprinting, so it is
+  # removed here too; that keeps _id identical to documents ingested by the old pipeline.
+  - remove:
+      field: tor.routing.addresses
+      ignore_missing: true
+  # ---- dedup: same relay state => same _id (version conflicts are expected and dropped) ----
+  - fingerprint:
+      description: Hash of relay attributes that indicate a change, written to _id.
+      fields:
+        - tor.description
+        - tor.exit.ip
+        - tor.name
+        - tor.routing.addresses
+        - tor.bandwidth.advertised
+        - tor.bandwidth.burst
+        - tor.bandwidth.observed
+        - tor.bandwidth.rate
+        - tor.contact.original
+        - tor.fingerprint
+        - tor.platform
+      target_field: _id
+      method: MD5
+      ignore_missing: true
+  # ---- relay flag descriptions ----
+  - script:
+      description: Describe each relay flag under tor.detail.*
+      lang: painless
+      if: ctx.tor?.description instanceof List
+      params:
+        Authority: Relay is a directory authority.
+        BadExit: Exit node that is not recommended (e.g., due to abuse reports or misconfiguration).
+        Exit: Relay allows traffic to exit the Tor network.
+        Fast: Relay has high bandwidth, based on observed performance.
+        Guard: Relay is suitable for use as an entry node.
+        HSDir: Relay stores hidden service descriptors (used in onion services).
+        NoEdConsensus: Relay was excluded from the consensus for some reason (e.g., misbehavior).
+        Running: Relay is currently running.
+        Stable: Relay has been up for a long time consistently.
+        Valid: Relay is considered "valid" by directory authorities.
+        Unnamed: Relay does not have a configured nickname.
+      source: |
+        Map d = new HashMap();
+        for (def f : ctx.tor.description) {
+          if (params.containsKey(f)) { d.put(f, params.get(f)); }
+        }
+        if (!d.isEmpty()) { ctx.tor.detail = d; }
+  # ---- ECS threat.indicator.* ----
+  - set:
+      field: threat.indicator.ip
+      copy_from: tor.exit.ip
+      ignore_empty_value: true
+  - set:
+      field: threat.indicator.name
+      copy_from: tor.routing.ipv4.ip
+      ignore_empty_value: true
+  - set:
+      field: threat.indicator.type
+      value: ipv4-addr
+  - set:
+      field: threat.indicator.as
+      copy_from: tor.exit.as
+      ignore_empty_value: true
+  - set:
+      field: threat.indicator.geo
+      copy_from: tor.exit.geo
+      ignore_empty_value: true
+  - set:
+      field: threat.indicator.first_seen
+      copy_from: tor.first_seen
+      ignore_empty_value: true
+  - set:
+      field: threat.indicator.last_seen
+      copy_from: tor.last_seen
+      ignore_empty_value: true
+  - set:
+      field: threat.indicator.last_changed
+      copy_from: tor.last_changed
+      ignore_empty_value: true
+  - set:
+      field: threat.indicator.last_restarted
+      copy_from: tor.last_restarted
+      ignore_empty_value: true
+  # ---- cleanup ----
+  - remove:
+      field: event.original
+      if: ctx.tags == null || !ctx.tags.contains('preserve_original_event')
+      ignore_missing: true
+on_failure:
+  - append:
+      field: error.message
+      value: >-
+        Processor '{{{ _ingest.on_failure_processor_type }}}'
+        {{#_ingest.on_failure_processor_tag}}with tag '{{{ _ingest.on_failure_processor_tag }}}'
+        {{/_ingest.on_failure_processor_tag}}failed with message '{{{ _ingest.on_failure_message }}}'
+  - set:
+      field: event.kind
+      value: pipeline_error

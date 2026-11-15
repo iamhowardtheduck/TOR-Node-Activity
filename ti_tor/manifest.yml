@@ -1,0 +1,30 @@
+format_version: 3.3.0
+name: ti_tor
+title: TOR Node Activity
+version: 0.5.1
+description: Collect TOR relay activity (exit and OR addresses, flags, bandwidth, AS) from the Onionoo API as threat intelligence indicators.
+type: integration
+categories:
+  - security
+  - threat_intel
+conditions:
+  kibana:
+    version: "^9.0.0"
+  elastic:
+    subscription: basic
+icons:
+  - src: /img/tor-logo.svg
+    title: TOR
+    size: 64x64
+    type: image/svg+xml
+policy_templates:
+  - name: tor
+    title: TOR Node Activity
+    description: Poll the Onionoo details API for TOR relay activity.
+    inputs:
+      - type: httpjson
+        title: Collect TOR relay activity via the Onionoo API
+        description: Periodically fetch TOR relay details from Onionoo.
+owner:
+  github: iamhowardtheduck
+  type: community

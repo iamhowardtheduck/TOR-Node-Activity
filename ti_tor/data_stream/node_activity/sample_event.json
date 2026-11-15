@@ -1,0 +1,116 @@
+{
+    "@timestamp": "2026-11-14T20:50:38.312Z",
+    "agent": {
+        "ephemeral_id": "0e7c6b1a-2f3d-4e5a-8b9c-1d2e3f4a5b6c",
+        "id": "c1d4e2a0-5b6f-4c3d-9e8a-7f6b5a4c3d2e",
+        "name": "tor-collector-01",
+        "type": "filebeat",
+        "version": "9.5.6"
+    },
+    "data_stream": {
+        "dataset": "ti_tor.node_activity",
+        "namespace": "default",
+        "type": "logs"
+    },
+    "ecs": {
+        "version": "8.0.0"
+    },
+    "elastic_agent": {
+        "id": "c1d4e2a0-5b6f-4c3d-9e8a-7f6b5a4c3d2e",
+        "snapshot": false,
+        "version": "9.5.6"
+    },
+    "event": {
+        "category": "threat",
+        "created": "2026-11-14T20:50:38.312Z",
+        "dataset": "node_activity",
+        "ingested": "2026-11-14T20:50:48.578Z",
+        "kind": "enrichment",
+        "module": "ti_tor",
+        "type": "indicator"
+    },
+    "input": {
+        "type": "httpjson"
+    },
+    "tags": [
+        "forwarded"
+    ],
+    "threat": {
+        "feed": {
+            "name": "TOR Node Activity"
+        },
+        "indicator": {
+            "first_seen": "2014-03-05T10:00:00.000Z",
+            "last_changed": "2026-04-06T23:00:00.000Z",
+            "last_restarted": "2026-11-01T20:40:47.000Z",
+            "last_seen": "2026-11-14T19:00:00.000Z",
+            "name": "88.99.105.161",
+            "type": "ipv4-addr"
+        }
+    },
+    "tor": {
+        "as": {
+            "organization": {
+                "name": "Hetzner Online GmbH"
+            }
+        },
+        "bandwidth": {
+            "advertised": 1024000,
+            "burst": 1945600,
+            "observed": 1969072,
+            "rate": 1024000
+        },
+        "contact": {
+            "original": "15424R/6DEA2BA30BC39EB6 Marc Alexander Lehmann <schmorp@schmorp.de>"
+        },
+        "description": [
+            "Fast",
+            "HSDir",
+            "Running",
+            "Stable",
+            "V2Dir",
+            "Valid"
+        ],
+        "detail": {
+            "Fast": "Relay has high bandwidth, based on observed performance.",
+            "HSDir": "Relay stores hidden service descriptors (used in onion services).",
+            "Running": "Relay is currently running. (Also appears as a top-level filter like in your URL.)",
+            "Stable": "Relay has been up for a long time consistently.",
+            "Valid": "Relay is considered \"valid\" by directory authorities."
+        },
+        "fingerprint": "FFBC69467B37D6AC66598BBD295F9B0D74119ADC",
+        "first_seen": "2014-03-05T10:00:00.000Z",
+        "hostname": {
+            "verified": [
+                "static.161.105.99.88.clients.your-server.de"
+            ]
+        },
+        "last_changed": "2026-04-06T23:00:00.000Z",
+        "last_restarted": "2026-11-01T20:40:47.000Z",
+        "last_seen": "2026-11-14T19:00:00.000Z",
+        "name": "plan9leia",
+        "platform": "Tor 0.4.9.15 on Linux",
+        "recommended_version": true,
+        "routing": {
+            "ipv4": {
+                "geo": {
+                    "city_name": "Falkenstein",
+                    "continent_name": "Europe",
+                    "country_iso_code": "DE",
+                    "country_name": "Germany",
+                    "location": {
+                        "lat": 50.477699995972216,
+                        "lon": 12.364899991080165
+                    },
+                    "region_iso_code": "DE-SN",
+                    "region_name": "Saxony"
+                },
+                "ip": "88.99.105.161",
+                "port": 4433
+            }
+        },
+        "running": true,
+        "version": "0.4.9.15",
+        "version_status": "recommended"
+    }
+}

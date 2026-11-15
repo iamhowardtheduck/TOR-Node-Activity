@@ -1,0 +1,49 @@
+# ECS fields populated by this data stream.
+- name: event.category
+  type: keyword
+- name: event.ingested
+  type: date
+- name: event.kind
+  type: keyword
+- name: event.type
+  type: keyword
+- name: threat.feed.name
+  type: keyword
+- name: threat.indicator.as.network
+  type: ip_range
+- name: threat.indicator.as.number
+  type: long
+- name: threat.indicator.as.organization.name
+  type: keyword
+- name: threat.indicator.first_seen
+  type: date
+  date_format: "strict_date_optional_time||epoch_millis||yyyy-MM-dd HH:mm:ss"
+- name: threat.indicator.geo.city_name
+  type: keyword
+- name: threat.indicator.geo.continent_name
+  type: keyword
+- name: threat.indicator.geo.country_iso_code
+  type: keyword
+- name: threat.indicator.geo.country_name
+  type: keyword
+- name: threat.indicator.geo.location
+  type: geo_point
+- name: threat.indicator.geo.region_iso_code
+  type: keyword
+- name: threat.indicator.geo.region_name
+  type: keyword
+- name: threat.indicator.ip
+  type: ip
+- name: threat.indicator.last_changed
+  type: date
+  date_format: "strict_date_optional_time||epoch_millis||yyyy-MM-dd HH:mm:ss"
+- name: threat.indicator.last_restarted
+  type: date
+  date_format: "strict_date_optional_time||epoch_millis||yyyy-MM-dd HH:mm:ss"
+- name: threat.indicator.last_seen
+  type: date
+  date_format: "strict_date_optional_time||epoch_millis||yyyy-MM-dd HH:mm:ss"
+- name: threat.indicator.name
+  type: keyword
+- name: threat.indicator.type
+  type: keyword

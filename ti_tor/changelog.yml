@@ -1,0 +1,30 @@
+- version: "0.5.1"
+  changes:
+    - description: Set package owner to iamhowardtheduck and anonymize the sample event.
+      type: enhancement
+      link: https://github.com/iamhowardtheduck/TOR-Node-Activity
+- version: "0.5.0"
+  changes:
+    - description: Ship the Tor onion icon as SVG. The Fleet UI only renders image/svg+xml icons, so the PNG icon never showed.
+      type: bugfix
+      link: https://github.com/iamhowardtheduck/TOR-Node-Activity
+- version: "0.4.0"
+  changes:
+    - description: Replace the icon with a square, transparent Tor onion PNG and fix the icon not rendering for the uploaded package.
+      type: bugfix
+      link: https://github.com/iamhowardtheduck/TOR-Node-Activity
+- version: "0.3.0"
+  changes:
+    - description: Use the Tor logo (Wikimedia Commons Tor_logo1.png) as the integration icon; document MapTiler key setup instead of shipping a helper script.
+      type: enhancement
+      link: https://github.com/iamhowardtheduck/TOR-Node-Activity
+- version: "0.2.0"
+  changes:
+    - description: Add the [TOR] Node Activity Overview dashboard and the TOR-Threat Intel Country Activity map (MapTiler layers need an API key).
+      type: enhancement
+      link: https://github.com/iamhowardtheduck/TOR-Node-Activity
+- version: "0.1.0"
+  changes:
+    - description: Initial release. Converted from the "TOR Activity" Custom HTTP JSON policy, the logs-ti_tor.node_activity ingest pipeline and index template.
+      type: enhancement
+      link: https://github.com/iamhowardtheduck/TOR-Node-Activity
